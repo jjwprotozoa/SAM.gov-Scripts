@@ -196,7 +196,6 @@ def format_contacts(opp):
     opp["secondaryContact"] = secondary
 
 # Main execution block
-if __name__ == "__main__":
     try:
         # Convert the JSON string into a Python dictionary
         data = json.loads(raw_api_response)
@@ -214,4 +213,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
-        if __name__ == "__main__":
+    if __name__ == "__main__":
