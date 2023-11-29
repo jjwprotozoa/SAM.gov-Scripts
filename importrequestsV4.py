@@ -1,7 +1,10 @@
-import requests, json
-from transform import process_opportunities 
-from opportunity_gui import get_filters, display_opps
+import requests
+import json
 import csv
+from datetime import datetime
+from pytz import timezone
+from dateutil import parser
+from dateutil.parser import parse
 
 # Set-Aside Types for selection
 set_aside_types = {
@@ -31,7 +34,21 @@ state_timezones = {
     'WI': 'America/Chicago', 'WY': 'America/Denver'
 }
 
+def validate_date(date_text):
+    try:
+        datetime.strptime(date_text, "%m/%d/%Y")
+        return True
+    except ValueError:
+        return False
+
 # Function to get user input
+    """
+    Prompts the user for necessary inputs to fetch opportunities data.
+
+    Returns:
+        tuple: A tuple containing the API key, start date, end date, record limit, award inclusion flag, keyword, and set-aside filter code.
+        None: If any validation fails.
+    """
 def get_user_input():
     api_key = input("Enter your API key: ")
     start_date = input("Enter start date (MM/DD/YYYY): ")
@@ -39,6 +56,12 @@ def get_user_input():
     limit = input("Enter the number of records to fetch: ")
     include_awards = input("Include awards? (yes/no): ").lower() == 'yes'
     keyword = input("Enter a keyword for filtering (leave blank if not needed): ")
+    if not validate_date(start_date) or not validate_date(end_date):
+        print("Invalid date format. Please use MM/DD/YYYY.")
+        return None
+    if not limit.isdigit() or int(limit) <= 0:
+        print("Invalid limit. Please enter a positive number.")
+        return None
 
     print("Available Set-Aside Types:")
     for code, description in set_aside_types.items():
@@ -49,13 +72,13 @@ def get_user_input():
 
 # Function to fetch data from the API
 def fetch_data(api_key, start_date, end_date, limit):
-    api_url = f"https://api.sam.gov/opportunities/v2/search?limit={limit}&api_key={api_key}&postedFrom={start_date}&postedTo={end_date}"
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Failed to fetch data: {response.status_code}")
-        print("Error details:", response.text)
+    try:
+        api_url = f"https://api.sam.gov/opportunities/v2/search?limit={limit}&api_key={api_key}&postedFrom={start_date}&postedTo={end_date}"
+        response = requests.get(api_url)
+        response.raise_for_status()  # Check for HTTP errors
+        return response.json() if response.status_code == 200 else None
+    except requests.RequestException as e:
+        print(f"Error fetching data: {e}")
         return None
 
 # Function to format the point of contact
@@ -98,67 +121,7 @@ def filter_data(data, include_awards, keyword, selected_set_aside):
         primary_contact, secondary_contact = format_poc(opportunity.get('pointOfContact', []))
         opportunity['primaryContact'] = primary_contact
         opportunity['secondaryContact'] = secondary_contact
-
-        opportunity['placeOfPerformance'] = format_place_of_performance(opportunity.get('placeOfPerformance'))
-
-# Function to format the address
-def format_address(address):
-    if not address:
-        return "Not available"
-    formatted_address = ', '.join(filter(None, [
-        address.get('streetAddress', ''),
-        address.get('city', ''),
-        address.get('state', ''),
-        address.get('zipcode', ''),
-        address.get('countryCode', '')
-    ]))
-    return formatted_address
-
-# Function to format and split datetime with inferred timezone
-def format_split_datetime_with_inferred_timezone(dt_str, state_code):
-    if not dt_str:
-        return "Not available", "Not available", "Not available"
-
-    # Infer timezone from state
-    tz_str = state_timezones.get(state_code, 'UTC')  # Default to UTC
-    tz = timezone(tz_str)
-    dt = parser.parse(dt_str).astimezone(tz)
-
-    date = dt.strftime("%Y-%m-%d")
-    time = dt.strftime("%H:%M:%S")
-    timezone_name = dt.tzname()
-    return date, time, timezone_name
-
-def format_award_data(award):
-    if not award:
-        return "Not available"
-    formatted_award = f"Date: {award.get('date', 'Not available')}, " \
-                      f"Number: {award.get('number', 'Not available')}, " \
-                      f"Amount: {award.get('amount', 'Not available')}, " \
-                      f"Awardee: {award.get('awardee', {}).get('name', 'Not available')}"
-    return formatted_award
-
-# Function to filter and format data
-def filter_data(data, include_awards, keyword, selected_set_aside):
-    filtered_data = []
-    for opportunity in data.get("opportunitiesData", []):
-        opportunity_type = opportunity.get("type", "").lower()
-        base_type = opportunity.get("baseType", "").lower()
-
-        # Exclude presolicitations
-        if 'presolicitation' in opportunity_type or 'presolicitation' in base_type:
-            continue
-
-        if include_awards or "solicitation" in opportunity_type:
-            if keyword and keyword.lower() not in opportunity.get("title", "").lower():
-                continue
-            if selected_set_aside and opportunity.get("typeOfSetAside", "") != selected_set_aside:
-                continue
-
-        primary_contact, secondary_contact = format_poc(opportunity.get('pointOfContact', []))
-        opportunity['primaryContact'] = primary_contact
-        opportunity['secondaryContact'] = secondary_contact
-        del opportunity['pointOfContact']  # Remove original pointOfContact field
+        del opportunity['pointOfContact']
 
         opportunity['placeOfPerformance'] = format_place_of_performance(opportunity.get('placeOfPerformance'))
 
@@ -167,7 +130,6 @@ def filter_data(data, include_awards, keyword, selected_set_aside):
         office_address = opportunity.get('officeAddress', {}) or {}
         opportunity['officeAddress'] = format_address(office_address)
 
-        # Infer timezone from officeAddress state
         state_code = office_address.get('state', '')
         posted_date, posted_time, posted_tz = format_split_datetime_with_inferred_timezone(opportunity.get('postedDate', ''), state_code)
         opportunity['postedDate'] = posted_date
@@ -182,33 +144,47 @@ def filter_data(data, include_awards, keyword, selected_set_aside):
         filtered_data.append(opportunity)
     return filtered_data
 
-# Function to save data to a CSV file
+# Function to format award data
+def format_award_data(award_data):
+    if not award_data:
+        return "Not available"
+    return f"{award_data.get('awardNumber', 'Not available')} (Amount: {award_data.get('amount', 'Not available')})"
+
+# Function to format address data
+def format_address(address_data):
+    if not address_data:
+        return "Not available"
+    address_parts = [
+        address_data.get('line1', 'Not available'),
+        address_data.get('city', {}).get('name', 'Not available'),
+        address_data.get('state', {}).get('name', 'Not available'),
+        address_data.get('zip', 'Not available'),
+        address_data.get('country', {}).get('name', 'Not available')
+    ]
+    return ", ".join(part for part in address_parts if part != 'Not available')
+
+# Function to format datetime with inferred timezone
+def format_split_datetime_with_inferred_timezone(datetime_str, state_code):
+    if not datetime_str or not state_code:
+        return "Not available", "Not available", "Not available"
+    dt = parse(datetime_str)
+    tz = state_timezones.get(state_code, 'UTC')
+    localized_dt = dt.astimezone(timezone(tz))
+    return localized_dt.strftime('%Y-%m-%d'), localized_dt.strftime('%H:%M:%S'), tz
+
 def save_to_csv(opportunities, filename):
     if not opportunities:
         print("No opportunities to save.")
         return
 
-    # Get filters from GUI   
-    filters = opportunity_gui.get_filters()
-    
-    # Fetch and transform
-    data = fetch_data(api_key, start_date, end_date, limit) 
-    opportunities = transform.process(data)
-
-    # Filter  
-    filtered_opps = filter_data(opportunities, filters)
-
-    # Output results  
-    opportunity_gui.display_opps(filtered_opps)
-    save_to_csv(filtered_opps, "output.csv")
-
-    # Check if the file is open
+    # Ensure the file is not open
     file_open = True
     while file_open:
         response = input(f"Please ensure that the file '{filename}' is closed. Type 'yes' when ready: ").lower()
         if response == 'yes':
             file_open = False
 
+    # Save to CSV
     try:
         keys = opportunities[0].keys()
         with open(filename, 'w', newline='', encoding='utf-8') as output_file:
@@ -219,43 +195,21 @@ def save_to_csv(opportunities, filename):
     except Exception as e:
         print(f"An error occurred while saving the file: {e}")
 
-# Main execution
-api_key, start_date, end_date, limit, include_awards, keyword, selected_set_aside = get_user_input()
-data = fetch_data(api_key, start_date, end_date, limit)
-if data:
-    print("Raw API Response:")
-    print(json.dumps(data, indent=4))
-
-    num_results = len(data.get("opportunitiesData", []))
-    print(f"Number of search results found: {num_results}")
-
-    filtered_opportunities = filter_data(data, include_awards, keyword, selected_set_aside)
-    if filtered_opportunities:
-        print("Filtered Opportunities:")
-        print(json.dumps(filtered_opportunities, indent=4))
-        save_to_csv(filtered_opportunities, "opportunities.csv")
-        print("Data saved to opportunities.csv")
-    else:
-        print("No matching opportunities found.")
-else:
-    print("No data received from API.")
-
-# Helper functions
-
 def main():
+    user_input = get_user_input()
+    if user_input is None:
+        return
+    api_key, start_date, end_date, limit, include_awards, keyword, selected_set_aside = user_input
+    data = fetch_data(api_key, start_date, end_date, limit)
+    if data:
+        num_results = len(data.get("opportunitiesData", []))
+        print(f"Number of search results found: {num_results}")
 
-    filters = get_filters()
-        
-    data = fetch_data()  
-
-    opportunities = process_opportunities(data)
-
-    filtered_opps = filter_opps(opportunities, filters)
-
-    display_opps(filtered_opps)
-    
-    save_to_csv(filtered_opps, "output.csv")
-
-
-if __name__ == "__main__":
-    main()
+        filtered_opportunities = filter_data(data, include_awards, keyword, selected_set_aside)
+        if filtered_opportunities:
+            save_to_csv(filtered_opportunities, "opportunities.csv")
+            print("Data saved to opportunities.csv")
+        else:
+            print("No matching opportunities found.")
+    else:
+        print

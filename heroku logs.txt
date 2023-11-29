@@ -1,0 +1,107 @@
+PS C:\Users\jjwpr\OneDrive\Documents\SAM.gov\My-Heroku-App> git add Procfile
+PS C:\Users\jjwpr\OneDrive\Documents\SAM.gov\My-Heroku-App> git commit -m "Add Procfile for Heroku"
+On branch main
+nothing to commit, working tree clean
+PS C:\Users\jjwpr\OneDrive\Documents\SAM.gov\My-Heroku-App> git push heroku main
+Everything up-to-date
+PS C:\Users\jjwpr\OneDrive\Documents\SAM.gov\My-Heroku-App> heroku logs --tail
+2023-11-24T10:43:40.749892+00:00 app[web.1]: self.wsgi = self.app.wsgi()
+2023-11-24T10:43:40.749892+00:00 app[web.1]: ^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.749893+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/app/base.py", line 67, in wsgi
+2023-11-24T10:43:40.749893+00:00 app[web.1]: self.callable = self.load()
+2023-11-24T10:43:40.749893+00:00 app[web.1]: ^^^^^^^^^^^
+2023-11-24T10:43:40.749894+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 58, in load
+2023-11-24T10:43:40.749894+00:00 app[web.1]: return self.load_wsgiapp()
+2023-11-24T10:43:40.749894+00:00 app[web.1]: ^^^^^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.749895+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+2023-11-24T10:43:40.749895+00:00 app[web.1]: return util.import_app(self.app_uri)
+2023-11-24T10:43:40.749895+00:00 app[web.1]: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.749896+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/util.py", line 371, in import_app
+2023-11-24T10:43:40.749896+00:00 app[web.1]: mod = importlib.import_module(module)
+2023-11-24T10:43:40.749896+00:00 app[web.1]: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.749912+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2023-11-24T10:43:40.749912+00:00 app[web.1]: return _bootstrap._gcd_import(name[level:], package, level)
+2023-11-24T10:43:40.749913+00:00 app[web.1]: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.749928+00:00 app[web.1]: File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2023-11-24T10:43:40.749928+00:00 app[web.1]: File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2023-11-24T10:43:40.749928+00:00 app[web.1]: File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2023-11-24T10:43:40.749929+00:00 app[web.1]: File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2023-11-24T10:43:40.749929+00:00 app[web.1]: File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2023-11-24T10:43:40.749929+00:00 app[web.1]: File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2023-11-24T10:43:40.749929+00:00 app[web.1]: File "/app/app.py", line 3, in <module>
+2023-11-24T10:43:40.749930+00:00 app[web.1]: import importrequestv3
+2023-11-24T10:43:40.749930+00:00 app[web.1]: ModuleNotFoundError: No module named 'importrequestv3'
+2023-11-24T10:43:40.749935+00:00 app[web.1]: [2023-11-24 10:43:40 +0000] [8] [INFO] Worker exiting (pid: 8)
+2023-11-24T10:43:40.749990+00:00 app[web.1]: [2023-11-24 10:43:40 +0000] [7] [ERROR] Exception in worker process
+2023-11-24T10:43:40.749990+00:00 app[web.1]: Traceback (most recent call last):
+2023-11-24T10:43:40.749991+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/arbiter.py", line 609, in spawn_worker
+2023-11-24T10:43:40.749991+00:00 app[web.1]: worker.init_process()
+2023-11-24T10:43:40.749991+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/workers/base.py", line 134, in init_process
+2023-11-24T10:43:40.749991+00:00 app[web.1]: self.load_wsgi()
+2023-11-24T10:43:40.749992+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+2023-11-24T10:43:40.749992+00:00 app[web.1]: self.wsgi = self.app.wsgi()
+2023-11-24T10:43:40.749993+00:00 app[web.1]: ^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.749993+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/app/base.py", line 67, in wsgi
+2023-11-24T10:43:40.749993+00:00 app[web.1]: self.callable = self.load()
+2023-11-24T10:43:40.749993+00:00 app[web.1]: ^^^^^^^^^^^
+2023-11-24T10:43:40.749994+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 58, in load
+2023-11-24T10:43:40.749994+00:00 app[web.1]: return self.load_wsgiapp()
+2023-11-24T10:43:40.749994+00:00 app[web.1]: ^^^^^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.749994+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+2023-11-24T10:43:40.749995+00:00 app[web.1]: return util.import_app(self.app_uri)
+2023-11-24T10:43:40.749995+00:00 app[web.1]: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.749995+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/util.py", line 371, in import_app
+2023-11-24T10:43:40.749996+00:00 app[web.1]: mod = importlib.import_module(module)
+2023-11-24T10:43:40.749996+00:00 app[web.1]: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.749996+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2023-11-24T10:43:40.749997+00:00 app[web.1]: return _bootstrap._gcd_import(name[level:], package, level)
+2023-11-24T10:43:40.749997+00:00 app[web.1]: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.749997+00:00 app[web.1]: File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2023-11-24T10:43:40.749997+00:00 app[web.1]: File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2023-11-24T10:43:40.749998+00:00 app[web.1]: File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2023-11-24T10:43:40.749998+00:00 app[web.1]: File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2023-11-24T10:43:40.749998+00:00 app[web.1]: File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2023-11-24T10:43:40.749998+00:00 app[web.1]: File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2023-11-24T10:43:40.749998+00:00 app[web.1]: File "/app/app.py", line 3, in <module>
+2023-11-24T10:43:40.749999+00:00 app[web.1]: import importrequestv3
+2023-11-24T10:43:40.749999+00:00 app[web.1]: ModuleNotFoundError: No module named 'importrequestv3'
+2023-11-24T10:43:40.750101+00:00 app[web.1]: [2023-11-24 10:43:40 +0000] [7] [INFO] Worker exiting (pid: 7)
+2023-11-24T10:43:40.785090+00:00 app[web.1]: [2023-11-24 10:43:40 +0000] [2] [ERROR] Worker (pid:8) exited with code 3
+2023-11-24T10:43:40.785576+00:00 app[web.1]: [2023-11-24 10:43:40 +0000] [2] [ERROR] Worker (pid:7) exited with code 3
+2023-11-24T10:43:40.785629+00:00 app[web.1]: Traceback (most recent call last):
+2023-11-24T10:43:40.785631+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/arbiter.py", line 209, in run
+2023-11-24T10:43:40.785765+00:00 app[web.1]: self.sleep()
+2023-11-24T10:43:40.785797+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/arbiter.py", line 360, in sleep
+2023-11-24T10:43:40.785857+00:00 app[web.1]: ready = select.select([self.PIPE[0]], [], [], 1.0)
+2023-11-24T10:43:40.785920+00:00 app[web.1]: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2023-11-24T10:43:40.785921+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/arbiter.py", line 242, in handle_chld
+2023-11-24T10:43:40.785966+00:00 app[web.1]: self.reap_workers()
+2023-11-24T10:43:40.785978+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/arbiter.py", line 530, in reap_workers
+2023-11-24T10:43:40.786042+00:00 app[web.1]: raise HaltServer(reason, self.WORKER_BOOT_ERROR)
+2023-11-24T10:43:40.786068+00:00 app[web.1]: gunicorn.errors.HaltServer: <HaltServer 'Worker failed to boot.' 3>
+2023-11-24T10:43:40.786068+00:00 app[web.1]:
+2023-11-24T10:43:40.786068+00:00 app[web.1]: During handling of the above exception, another exception occurred:
+2023-11-24T10:43:40.786069+00:00 app[web.1]:
+2023-11-24T10:43:40.786072+00:00 app[web.1]: Traceback (most recent call last):
+2023-11-24T10:43:40.786080+00:00 app[web.1]: File "/app/.heroku/python/bin/gunicorn", line 8, in <module>
+2023-11-24T10:43:40.786105+00:00 app[web.1]: sys.exit(run())
+2023-11-24T10:43:40.786125+00:00 app[web.1]: ^^^^^
+2023-11-24T10:43:40.786133+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 67, in run
+2023-11-24T10:43:40.786162+00:00 app[web.1]: WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]").run()
+2023-11-24T10:43:40.786178+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/app/base.py", line 236, in run
+2023-11-24T10:43:40.786221+00:00 app[web.1]: super().run()
+2023-11-24T10:43:40.786236+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/app/base.py", line 72, in run
+2023-11-24T10:43:40.786270+00:00 app[web.1]: Arbiter(self).run()
+2023-11-24T10:43:40.786273+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/arbiter.py", line 229, in run
+2023-11-24T10:43:40.786316+00:00 app[web.1]: self.halt(reason=inst.reason, exit_status=inst.exit_status)
+2023-11-24T10:43:40.786336+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/arbiter.py", line 342, in halt
+2023-11-24T10:43:40.786386+00:00 app[web.1]: self.stop()
+2023-11-24T10:43:40.786393+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/arbiter.py", line 396, in stop
+2023-11-24T10:43:40.786443+00:00 app[web.1]: time.sleep(0.1)
+2023-11-24T10:43:40.786456+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/arbiter.py", line 242, in handle_chld
+2023-11-24T10:43:40.786491+00:00 app[web.1]: self.reap_workers()
+2023-11-24T10:43:40.786500+00:00 app[web.1]: File "/app/.heroku/python/lib/python3.11/site-packages/gunicorn/arbiter.py", line 530, in reap_workers
+2023-11-24T10:43:40.786560+00:00 app[web.1]: raise HaltServer(reason, self.WORKER_BOOT_ERROR)
+2023-11-24T10:43:40.786574+00:00 app[web.1]: gunicorn.errors.HaltServer: <HaltServer 'Worker failed to boot.' 3>
+2023-11-24T10:43:40.918661+00:00 heroku[web.1]: Process exited with status 1
+2023-11-24T10:43:40.938714+00:00 heroku[web.1]: State changed from starting to crashed
