@@ -1,0 +1,38 @@
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+
+# Environment
+venv/
+.env
+
+# IDE specific
+.idea/
+.vscode/
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# Compiled source files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Archive files
+*.zip
+*.gz
+*.tar
+*.rar
+
+# Miscellaneous
+.DS_Store
+Thumbs.db

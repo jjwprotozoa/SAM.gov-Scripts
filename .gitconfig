@@ -1,0 +1,10 @@
+[filter "lfs"]
+        clean = git-lfs clean -- %f
+        smudge = git-lfs smudge -- %f
+        process = git-lfs filter-process
+        required = true
+[user]
+        name = Justin
+        email = jjwprotozoa@gmail.com
+[credential]
+    helper = store --timeout=3600
